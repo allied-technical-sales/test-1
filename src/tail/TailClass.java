@@ -1,5 +1,6 @@
 package tail;
 import java.nio.file.Path;
+import java.util.List;
 
 public class TailClass {
 	private Parser p;
@@ -10,18 +11,20 @@ public class TailClass {
 		p = new Parser(args);
 		ph = new PathHandler(p.getFileName());
 		Path file = ph.getPath();
+		
 		if(file == null) {
 			System.out.println("File Name is not Valid, Please pass a valid file");
-			return;
+			throw new IllegalArgumentException();
 		}
-		
-		rd = new ReadData(ph.getPath(), 10, 0);
-		
+		int count = p.getCount();
+		rd = new ReadData(ph.getPath(), count);
+		if(rd == null) {
+			System.out.println("ReadData failed to grab handle, please check input");
+			throw new NullPointerException();
+		}
 	}
 	
-	
-	
-	public void print() {
-		ph.print();
+	public List<String> getData(){
+		return rd.getData();
 	}
 }
