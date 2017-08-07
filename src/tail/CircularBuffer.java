@@ -14,6 +14,9 @@ public class CircularBuffer {
         private int counter;
 
         public CircularBuffer(int size) {
+        	if (size <=0 ) {
+    			throw new IllegalArgumentException();
+        	}
             this.size = size;
             this.data = new String[size];
             this.counter = 0;

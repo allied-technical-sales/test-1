@@ -18,8 +18,6 @@ public class Parser {
 	/* option to provide to the customer */
 	private final String[] lineOptions = {"n", "lines"};
 	private final String[] helpOptions = {"h", "help"};
-	/* implement if required */
-	// private final String[] verboseOptions = {"v", "verbose"};
 	
 	private final OptionParser p;
 	private final OptionSet o;
@@ -34,9 +32,6 @@ public class Parser {
 		
 		/* help */
 		p.acceptsAll(Arrays.asList(helpOptions), "Help for the command").forHelp();
-		
-		/* verbose */
-		// p.acceptsAll(Arrays.asList(verboseOptions), "Verbose Logging for the Command");
 		
 		/* file */
 		p.nonOptions( "File Name to be processed" ).ofType(String.class);

@@ -7,14 +7,18 @@ import java.util.List;
 
 public class Main {
 	
+	private static void print(List<String> l) {
+		for (String s : l) {
+			System.out.println(s);
+		}
+	}
+	
 
 	public static void main(String[] args) {
 		
 		TailClass t = new TailClass(args);
-		List<String> l = t.getData();
-		for (String s : l) {
-			System.out.println(s);
-		}
+		print(t.getData());
+
 		
 	}
 

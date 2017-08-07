@@ -2,7 +2,12 @@ package tail;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+/*  
+ *  This class process the filename passed 
+ *  here we do check on the filename and once 
+ *  confirmed that file is valid we return the Path to file
+ *  which is then used by ReadData class to read the actual data  
+ */
 
 public class PathHandler {
 	private String fileName;
@@ -12,10 +17,6 @@ public class PathHandler {
 			return;
 		}
 		this.fileName = new String(fileName);
-	}
-	
-	public void print() {
-		System.out.println(this.fileName);
 	}
 	
 	public Path getPath() {
