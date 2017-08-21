@@ -43,17 +43,54 @@ if options[:debug]
   p ARGV
 end
 
+# read from the back, how much to read at a time
+SEEK_AMOUNT = 65536
 
 if options[:lines] != nil
   # remaining arguments are assumed to be filenames.
   ARGV.each do |filename|
     begin
-      f1 = File.new(filename)
-      puts f1.readlines.last(options[:lines])
+      f1 = File.open(filename)
+
+      if f1.size <= SEEK_AMOUNT # if the file is smaller than SEEK_AMOUNT, read the whole thing at once
+        f1buffer = f1.readlines.last(options[:lines])
+        puts f1buffer
+      else # otherwise, seek to the end and keep adding text to the buffer until we have enough lines
+        seek_amount = SEEK_AMOUNT
+
+        # seek to the position where we want to start reading from
+        # i.e. seek_amount from the end of the file
+        f1.seek(-seek_amount, :END)
+
+        # initialize buffer
+        f1buffer = ""
+
+        # keep looping until we have enough "\n" in the buffer
+        while f1buffer.count("\n") <= options[:lines]
+
+          # read from position, seek_amount amount, a prepend to buffer
+          f1buffer = f1.read(seek_amount) + f1buffer
+
+          # read moves the position forward, so we need to move it back to where we "started"
+          f1.seek(-seek_amount, :CUR)
+
+          # if current position is less than seek_amount, we just read the rest and exit the loop
+          # we might not have enough lines, but that is ok
+          if f1.tell <= seek_amount
+            tell = f1.tell
+            f1.seek(-tell, :CUR)
+            f1buffer = f1.read(tell) + f1buffer
+            break
+          else # otherwise, move position further along and prepare for another read
+            f1.seek(-seek_amount, :CUR)
+          end
+        end
+        # when we split the buffer by \n, we want to add \n back in to each line to produce identical output to File.readlines above
+        puts f1buffer.split("\n").last(options[:lines]).map{|x| "#{x}\n"}
+      end
     rescue Exception => e
       puts e.message
-      puts e.backtrace.inspect.join("\n")
-      return
+      puts e.backtrace.inspect
     end
   end
 end
