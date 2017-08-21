@@ -30,8 +30,13 @@ OptionParser.new do |opts|
 
   # -n, --lines=K flag
   opts.on("-n", "--lines=K", "Output the last K lines, instead of the default of the last 10; alternatively, use \"-n +K\" to output lines starting with the Kth.") do |k|
-    options[:from_start] = true if k.include? "+"
-    options[:lines] = k.to_i
+    if k.include? "+"
+      options[:from_start] = true
+      options[:lines] = [k.to_i - 1, 0].max
+    else
+      options[:from_start] = false
+      options[:lines] = k.to_i
+    end
   end
 end.parse!
 
@@ -51,16 +56,15 @@ if options[:lines] != nil
   # remaining arguments are assumed to be filenames.
   ARGV.each do |filename|
     begin
+      tail_lines = ""
       f1 = File.open(filename)
-
       if f1.size <= SEEK_AMOUNT # if the file is smaller than SEEK_AMOUNT, read the whole thing at once
-        if options[:from_start]
+        if options[:from_start] # -n +K, start reading from first K lines
           f1lines = f1.readlines
           tail_lines = f1lines.last([f1lines.size - options[:lines], 0].max)
         else
           tail_lines = f1.readlines.last(options[:lines])
         end
-        puts tail_lines
       elsif options[:from_start]
 
         seek_amount = SEEK_AMOUNT
@@ -68,14 +72,28 @@ if options[:lines] != nil
         # initialize buffer
         f1buffer = ""
 
-        # keep looping until we have enough "\n" in the buffer
-        while f1buffer.count("\n") <= options[:lines]
+        overflow = false
 
+        # keep looping until we have enough "\n" in the buffer
+        while f1buffer.count("\n") < options[:lines]
           # read from position, seek_amount amount, a prepend to buffer
-          f1buffer += f1.read(seek_amount)
+          f2buffer = f1.read(seek_amount)
+
+          # another edgecase, if we finish reading everything and we still don't have enough lines, just don't print anything
+          # otherwise we might accidentally add \n back in
+          overflow = true and break if f2buffer.nil?
+          f1buffer += f2buffer
         end
-        f1lines = f1buffer.split("\n")
-        tail_lines = f1lines.last([f1lines.size - options[:lines], 0].max).join("\n") + f1.read
+
+        unless overflow
+          # small edgecase if we split on \n and \n is the last character, it disappears so we have to readd it later
+          readd = f1buffer[-1] == "\n" ? "\n" : ""
+          f1lines = (f1buffer).split("\n")
+
+          # this simply takes the "remaining" lines after the first +K lines and adds them to the rest of the file
+          # NOTE: it is possible that the line is cut in half since we are reading by arbitrary number of bytes
+          tail_lines = (f1lines.last([f1lines.size - options[:lines], 0].max).join("\n") || "") + readd + f1.read
+        end
       else # otherwise, seek to the end and keep adding text to the buffer until we have enough lines
         seek_amount = SEEK_AMOUNT
 
@@ -105,11 +123,12 @@ if options[:lines] != nil
           else # otherwise, move position further along and prepare for another read
             f1.seek(-seek_amount, :CUR)
           end
-          tail_lines = f1buffer.split("\n").last(options[:lines]).map{|x| "#{x}\n"}
         end
         # when we split the buffer by \n, we want to add \n back in to each line to produce identical output to File.readlines above
-        puts tail_lines
+        tail_lines = f1buffer.split("\n").last(options[:lines]).map{|x| "#{x}\n"}
       end
+      # edge case, if we print nothing it will still print a line
+      puts tail_lines unless tail_lines == ""
     rescue Exception => e
       puts e.message
       puts e.backtrace.inspect
