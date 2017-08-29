@@ -1,22 +1,15 @@
-Back end programmer test 1
+# tail.rb
+## author: Ryan Wong (r25wong@gmail.com)
+## requirements: tested with ruby 2.4.0
 
-Use whatever language you wish.
+## usage:
+`ruby tail.rb [OPTION]... [FILE]...`
 
-Please implement "tail" Linux program. We are specifically looking for the -n functionality, but are interested in seeing how you would add more functionality for future releases.
+## help:
+`ruby tail.rb -h`
 
-https://www.computerhope.com/unix/utail.htm
+## example usage:
+`ruby tail.rb -n 20 test1.txt`
 
-We will be grading based on:
-
-1) generic design
-2) clean code
-3) unit testing
-4) documentation
-
-
-during interview We will add follow up questions, and will request an upgrade to the program.
-
-This test should take between 30 - 90 minutes.
-
-Fork this repo, and submit your test via pull request.
-Tests not submitted via pull request will not be reviewed.
+## tests:
+`ruby tail_test.rb`
