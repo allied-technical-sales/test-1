@@ -38,6 +38,22 @@ OptionParser.new do |opts|
       options[:lines] = k.to_i
     end
   end
+
+  # follow flag
+  opts.on("-f", "--follow=K", "Follow") do |k|
+    options[:follow] = k
+  end
+
+  # retry flag
+  opts.on("--retry", "Retry") do |k|
+    options[:retry] = true
+  end
+
+  # follow flag
+  opts.on("-F", "--follow-retry=K", "Follow with retry") do |k|
+    options[:follow] = k
+    options[:retry] = true
+  end
 end.parse!
 
 # set default for :lines option to 10
@@ -54,7 +70,7 @@ SEEK_AMOUNT = 65536
 
 if options[:lines] != nil
   # remaining arguments are assumed to be filenames.
-  ARGV.each do |filename|
+  ARGV.concat([options[:follow]]).each do |filename|
     begin
       tail_lines = ""
       f1 = File.open(filename)
@@ -133,5 +149,30 @@ if options[:lines] != nil
       puts e.message
       puts e.backtrace.inspect
     end
+  end
+end
+
+if options[:follow] != nil
+  begin
+    tail_lines = ""
+    f1 = File.open(options[:follow])
+    f1.seek(0, :END)
+    tell = f1.tell
+    f1.close
+    while true
+      f1 = File.open(options[:follow])
+      f1.seek(tell, :CUR)
+      f2buffer = f1.read(SEEK_AMOUNT)
+      while !f2buffer.nil?
+        puts f2buffer
+        tell = f1.tell
+        f2buffer = f1.read(SEEK_AMOUNT)
+      end
+      sleep 0.1
+    end
+  rescue Exception => e
+    retry if options[:retry]
+    puts e.message
+    puts e.backtrace.inspect
   end
 end
