@@ -12,6 +12,7 @@ Optional: -n <number_of_line>
 
 import sys
 
+#parse sys arguments and return dictionary
 def parse_args():
 	args = {}
 	if len(sys.argv) < 2:
@@ -38,25 +39,32 @@ def parse_args():
 
 	return args
 
+
+
 def tail(args):
 	if len(args) < 2:
+		#for general implementation
 		file_name = args['file_name']
 		n = 10
+
 	elif len(args) == 2:
+		#for flag retrival
+		#for future use
 		file_name = args['file_name']
 		if args['command'] == '-n':
 			print"Syntax Error: Insuffiecient argument\nUsage: python tail.py <file_name> [optional]<command> <value>"
-
 		return False
 
 	elif len(args) == 3:
+		#for -n flag and assigning number of lines
 		file_name = args['file_name']
 		if args['command'] == '-n':
 			try:
 				n = int(args['value'])
 			except:
-				print "Invalid value\nPlease provide integer value"		
-		
+				print "Invalid value\nPlease provide integer value"
+				return False		
+	#read file
 	out_buff = ""
 	i = 0
 	with open(file_name) as file_obj:

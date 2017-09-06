@@ -20,3 +20,14 @@ This test should take between 30 - 90 minutes.
 
 Fork this repo, and submit your test via pull request.
 Tests not submitted via pull request will not be reviewed.
+
+# Usage:
+
+Script is a simple implementation of tail command. By default script will return last 10 lines of given file. Implementation also include -n functionality. -n flag can be used for specifing number of file required in output.
+
+#### Syntax:
+
+    python tail.py <file_name>
+
+#### optional:
+    -n <number_of_lines>
