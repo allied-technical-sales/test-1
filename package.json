@@ -2,7 +2,7 @@
   "name": "head-tail-stream",
   "version": "0.1.2",
   "description": "Output the first or last lines of a stream",
-  "author": "Diego Guerra <dgoguerra.or@gmail.com>",
+  "author": "Diego Guerra <dgoguerra.or@gmail.com>", "Hang Wu <rayzh2013@gmail.com>"
   "license": "MIT",
   "homepage": "https://github.com/dgoguerra/head-tail-stream#readme",
   "repository": {
