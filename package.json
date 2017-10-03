@@ -1,0 +1,33 @@
+{
+  "name": "head-tail-stream",
+  "version": "0.1.2",
+  "description": "Output the first or last lines of a stream",
+  "author": "Diego Guerra <dgoguerra.or@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/dgoguerra/head-tail-stream#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgoguerra/head-tail-stream.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dgoguerra/head-tail-stream/issues"
+  },
+  "keywords": [
+    "stream",
+    "peek",
+    "head",
+    "tail",
+    "cli"
+  ],
+  "dependencies": {
+    "map-stream": "0.0.6",
+    "split": "^1.0.0",
+    "stream-combiner": "^0.2.2"
+  },
+  "devDependencies": {
+    "tape": "^4.5.1"
+  },
+  "scripts": {
+    "test": "node_modules/.bin/tape test.js"
+  }
+}
